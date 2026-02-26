@@ -1,3 +1,14 @@
+# Java
 *.class
-*.bin
-*.git
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Build output
+bin/
+
+# OS files
+.DS_Store
+Thumbs.db
