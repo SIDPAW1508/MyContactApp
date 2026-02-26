@@ -1,45 +1,49 @@
 package com.seveneleven.mycontactapp;
 
-import com.seveneleven.mycontactapp.user.builder.UserBuilder;
-import com.seveneleven.mycontactapp.user.factory.UserFactory.UserType;
-import com.seveneleven.mycontactapp.user.model.User;
-import com.seveneleven.mycontactapp.exception.ValidationException;
+import java.util.Scanner;
+
+import com.seveneleven.mycontactapp.auth.Authentication;
+import com.seveneleven.mycontactapp.auth.strategy.BasicAuthStrategy;
+import com.seveneleven.mycontactapp.auth.store.UserStore;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        try {
-            // Create FREE user
-            User freeUser = new UserBuilder()
-                    .email("freeuser@gmail.com")
-                    .password("free123")
-                    .name("Free User")
-					.type(UserType.FREE)
-                    .build();
+        Scanner scanner = new Scanner(System.in);
 
-            // Create PREMIUM user
-            User premiumUser = new UserBuilder()
-                    .type(UserType.PREMIUM)
-                    .email("premiumuser@gmail.com")
-                    .password("premium123")
-                    .name("Premium User")
-                    .build();
+        // -------- SIGN UP --------
+        System.out.println("=== SIGN UP ===");
 
-            // Print details
-            printUserDetails(freeUser);
-            printUserDetails(premiumUser);
+        System.out.print("Enter name: ");
+        String name = scanner.nextLine();
 
+        System.out.print("Enter email: ");
+        String email = scanner.nextLine();
 
-        } catch (ValidationException e) {
-            System.out.println("Validation error: " + e.getMessage());
-        }
-    }
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
 
-    private static void printUserDetails(User user) {
-        System.out.println("\nUser Details:");
-        System.out.println("Name: " + user.getName());
-        System.out.println("Email: " + user.getEmail());
-        System.out.println("Role: " + user.getRole());
+        UserStore.saveUser(email, password);
+        System.out.println("Signup successful for: " + name);
+
+        // -------- LOGIN --------
+        System.out.println("\n=== LOGIN ===");
+
+        System.out.print("Enter email: ");
+        String loginEmail = scanner.nextLine();
+
+        System.out.print("Enter password: ");
+        String loginPassword = scanner.nextLine();
+
+        Authentication auth = new BasicAuthStrategy();
+
+        auth.login(loginEmail, loginPassword)
+                .ifPresentOrElse(
+                        user -> System.out.println("✅ Valid credentials. Login successful."),
+                        () -> System.out.println("❌ Invalid credentials.")
+                );
+
+        scanner.close();
     }
 }
