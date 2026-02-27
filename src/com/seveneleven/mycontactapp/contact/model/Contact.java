@@ -3,6 +3,7 @@ package com.seveneleven.mycontactapp.contact.model;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.ArrayList;
 
 /**
  * Abstract base class representing a Contact.
@@ -92,6 +93,37 @@ public abstract class Contact {
      * Implemented by subclasses (e.g., PERSON, ORGANIZATION).
      */
     public abstract String getType();
+    public void setName(String name) {
+
+        if (name == null || name.isBlank()) {
+
+            throw new IllegalArgumentException("Name cannot be empty");
+
+        }
+
+        this.name = name;
+
+    }
+
+    public void setPhoneNumbers(List<PhoneNumber> phoneNumbers) {
+
+        this.phoneNumbers = new ArrayList<>(phoneNumbers); // defensive copy
+
+    }
+
+    public void setEmailAddresses(List<EmailAddress> emailAddresses) {
+
+        this.emailAddresses = new ArrayList<>(emailAddresses); // defensive copy
+
+    }
+    protected Contact(Contact other) {
+    	this.id = other.id;
+    	   this.createdAt = other.createdAt;
+    	   this.name = other.name;
+    	   // deep copy
+    	   this.phoneNumbers = new ArrayList<>(other.phoneNumbers);
+    	   this.emailAddresses = new ArrayList<>(other.emailAddresses);
+    	}
 
     /**
      * Returns a formatted string representation of the contact.

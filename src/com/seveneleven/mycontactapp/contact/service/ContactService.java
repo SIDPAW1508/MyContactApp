@@ -43,9 +43,20 @@ public class ContactService {
      * @param id the UUID of the contact
      * @return Optional containing the contact if found, otherwise empty
      */
-    public Optional<Contact> getContactById(UUID id) {
+    public Optional<Contact> getContactByName(String name) {
         return contacts.stream()
-                .filter(c -> c.getId().equals(id)) // fixed: getId() and contacts variable
+                .filter(c -> c.getName().equalsIgnoreCase(name)) // fixed: getId() and contacts variable
                 .findFirst();
     }
+    public Optional<Contact> getContactById(UUID id) {
+       return contacts.stream()
+               .filter(contact -> contact.getId().equals(id))
+               .findFirst();
+    }
+    public void replaceContact(Contact oldContact, Contact newContact) {
+    	   int index = contacts.indexOf(oldContact);
+    	   if (index != -1) {
+    	       contacts.set(index, newContact);
+    	   }
+    	}
 }
