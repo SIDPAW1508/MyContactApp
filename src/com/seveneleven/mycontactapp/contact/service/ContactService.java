@@ -7,6 +7,8 @@ import com.seveneleven.mycontactapp.contact.filter.ContactFilter;
 import com.seveneleven.mycontactapp.contact.model.Contact;
 import com.seveneleven.mycontactapp.contact.search.SearchCriteria;
 
+import com.seveneleven.mycontactapp.contact.tag.Tag;
+
 /**
  * Service layer responsible for managing Contact entities.
  *
@@ -75,10 +77,11 @@ public class ContactService {
         return before - contacts.size();
     }
 
-    public void bulkAddTag(Predicate<Contact> condition, String tag) {
-        contacts.stream()
-                .filter(condition)
-                .forEach(c -> c.addTag(tag));
+    public void bulkAddTag(Predicate<Contact> condition, String tagName) {
+       Tag tag = new Tag(tagName);
+       contacts.stream()
+               .filter(condition)
+               .forEach(c -> c.addTag(tag));
     }
 
     public List<String> bulkExport(Predicate<Contact> condition) {
