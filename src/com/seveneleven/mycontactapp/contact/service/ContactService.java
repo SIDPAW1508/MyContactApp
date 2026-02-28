@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.function.Predicate;
 
 import com.seveneleven.mycontactapp.contact.model.Contact;
+import com.seveneleven.mycontactapp.contact.search.SearchCriteria;
 
 public class ContactService {
 
@@ -164,6 +165,12 @@ public class ContactService {
 
                 .toList();
 
+    }
+ // ================= UC-09 : SEARCH CONTACTS =================
+    public List<Contact> search(SearchCriteria criteria) {
+       return contacts.stream()
+               .filter(criteria.toPredicate())
+               .toList();
     }
 
     // =========================

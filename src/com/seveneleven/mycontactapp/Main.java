@@ -7,6 +7,12 @@ import com.seveneleven.mycontactapp.auth.Authentication;
 import com.seveneleven.mycontactapp.auth.strategy.BasicAuthStrategy;
 import com.seveneleven.mycontactapp.auth.store.UserStore;
 import com.seveneleven.mycontactapp.contact.model.*;
+import com.seveneleven.mycontactapp.contact.search.CompositeSearchCriteria;
+import com.seveneleven.mycontactapp.contact.search.EmailSearchCriteria;
+import com.seveneleven.mycontactapp.contact.search.NameSearchCriteria;
+import com.seveneleven.mycontactapp.contact.search.PhoneSearchCriteria;
+import com.seveneleven.mycontactapp.contact.search.SearchCriteria;
+import com.seveneleven.mycontactapp.contact.search.TagSearchCriteria;
 import com.seveneleven.mycontactapp.contact.service.ContactService;
 import com.seveneleven.mycontactapp.exception.ValidationException;
 import com.seveneleven.mycontactapp.user.builder.UserBuilder;
@@ -93,6 +99,7 @@ public class Main {
                 System.out.println("5. Change Password (UC-03)");
                 System.out.println("6. Delete Contact (UC-07)");
                 System.out.println("7. Bulk Operations (UC-08)");
+                System.out.println("8. Search Contacts (UC-09");
                 System.out.println("0. Exit");
                 System.out.print("Choose option: ");
 
@@ -366,6 +373,150 @@ public class Main {
                     	   };
                     	   System.out.println("✅ Deleted " + deleted + " contacts.");
                     	}
+                    case 9 -> {
+
+                        System.out.println("\n=== SEARCH CONTACTS ===");
+
+                        System.out.println("1. Search by Name");
+
+                        System.out.println("2. Search by Phone");
+
+                        System.out.println("3. Search by Email");
+
+                        System.out.println("4. Search by Tag");
+
+                        System.out.println("5. Search by Name + Tag");
+
+                        System.out.println("0. Back");
+
+                        System.out.print("Choose option: ");
+
+                        int searchChoice = Integer.parseInt(sc.nextLine());
+
+                        List<Contact> results = new ArrayList<>();
+
+                        switch (searchChoice) {
+
+                            // 🔍 Search by Name
+
+                            case 1 -> {
+
+                                System.out.print("Enter name keyword: ");
+
+                                String name1 = sc.nextLine();
+
+                                results = contactService.search(
+
+                                        new NameSearchCriteria(name1)
+
+                                );
+
+                            }
+
+                            // 📞 Search by Phone
+
+                            case 2 -> {
+
+                                System.out.print("Enter phone digits: ");
+
+                                String phone = sc.nextLine();
+
+                                results = contactService.search(
+
+                                        new PhoneSearchCriteria(phone)
+
+                                );
+
+                            }
+
+                            // 📧 Search by Email
+
+                            case 3 -> {
+
+                                System.out.print("Enter email keyword: ");
+
+                                String email1 = sc.nextLine();
+
+                                results = contactService.search(
+
+                                        new EmailSearchCriteria(email1)
+
+                                );
+
+                            }
+
+                            // 🏷 Search by Tag
+
+                            case 4 -> {
+
+                                System.out.print("Enter tag: ");
+
+                                String tag = sc.nextLine();
+
+                                results = contactService.search(
+
+                                        new TagSearchCriteria(tag)
+
+                                );
+
+                            }
+
+                            // 🔗 Composite Search (Name + Tag)
+
+                            case 5 -> {
+
+                                System.out.print("Enter name keyword: ");
+
+                                String name1 = sc.nextLine();
+
+                                System.out.print("Enter tag: ");
+
+                                String tag = sc.nextLine();
+
+                                SearchCriteria composite = new CompositeSearchCriteria(
+
+                                        List.of(
+
+                                                new NameSearchCriteria(name1),
+
+                                                new TagSearchCriteria(tag)
+
+                                        )
+
+                                );
+
+                                results = contactService.search(composite);
+
+                            }
+
+                            case 0 -> {
+
+                                System.out.println("Returning to main menu...");
+
+                                break;
+
+                            }
+
+                            default -> System.out.println("Invalid option.");
+
+                        }
+
+                        // 📤 Display results
+
+                        if (!results.isEmpty()) {
+
+                            System.out.println("\n--- SEARCH RESULTS (" + results.size() + ") ---");
+
+                            results.forEach(System.out::println);
+
+                        } else if (searchChoice != 0) {
+
+                            System.out.println("❌ No contacts found.");
+
+                        }
+
+                    }
+                     
 
                     // =====================================================
                     // EXIT APPLICATION
