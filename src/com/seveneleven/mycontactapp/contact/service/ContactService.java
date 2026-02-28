@@ -107,6 +107,16 @@ public class ContactService {
                 .sorted(sorter)
                 .toList();
     }
+    public boolean applyTagsToContact(String contactName, Set<Tag> tags) {
+    	   return contacts.stream()
+    	           .filter(c -> c.getName().equalsIgnoreCase(contactName))
+    	           .findFirst()
+    	           .map(c -> {
+    	               c.addTags(tags);
+    	               return true;
+    	           })
+    	           .orElse(false);
+    	}
 
     // ================= EXTRA =================
     public List<Contact> getAllContacts() {

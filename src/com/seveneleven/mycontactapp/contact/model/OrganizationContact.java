@@ -1,41 +1,29 @@
 package com.seveneleven.mycontactapp.contact.model;
 
 import java.util.List;
+import java.util.Set;
+import com.seveneleven.mycontactapp.contact.tag.Tag;
 
 /**
  * Represents an organization/company contact.
- *
- * Used for storing business or institutional contacts.
  */
 public class OrganizationContact extends Contact {
 
-    // =====================================================
-    // Constructor (UC-04 : Create Contact)
-    // =====================================================
-    public OrganizationContact(String name,
-                               List<PhoneNumber> phoneNumbers,
-                               List<EmailAddress> emailAddresses) {
-
+    public OrganizationContact(String name, List<PhoneNumber> phoneNumbers, List<EmailAddress> emailAddresses) {
         super(name, phoneNumbers, emailAddresses);
     }
 
-    // =====================================================
-    // Copy Constructor (UC-06 : Edit Contact)
-    // =====================================================
     public OrganizationContact(OrganizationContact other) {
-
-        super(
-                other.getName(),
-                other.getPhoneNumbers(),
-                other.getEmailAddresses()
-        );
+        super(other.getName(), other.getPhoneNumbers(), other.getEmailAddresses());
     }
 
-    // =====================================================
-    // Contact Type
-    // =====================================================
     @Override
     public String getType() {
         return "ORGANIZATION";
+    }
+
+    @Override
+    public void addTags(Set<Tag> tags) {
+        addTags1(tags);
     }
 }

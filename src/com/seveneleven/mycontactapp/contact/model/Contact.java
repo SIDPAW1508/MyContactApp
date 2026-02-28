@@ -53,7 +53,7 @@ public abstract class Contact {
     public void incrementContactCount() { contactCount++; }
 
     public void addTag(Tag tag) { tags.add(tag); }
-
+    public void addTags1(Set<Tag> tags) { this.tags.addAll(tags); }
     public void removeTag(Tag tag) { tags.remove(tag); }
 
     public void setName(String name) { this.name = name; }
@@ -72,4 +72,6 @@ public abstract class Contact {
      * Returns the type of contact: "PERSON" or "ORGANIZATION".
      */
     public abstract String getType();
+
+	public abstract void addTags(Set<Tag> tags2);
 }
