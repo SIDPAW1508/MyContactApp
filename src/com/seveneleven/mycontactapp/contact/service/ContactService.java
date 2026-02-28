@@ -1,189 +1,112 @@
 package com.seveneleven.mycontactapp.contact.service;
 
-import java.util.ArrayList;
-
-import java.util.List;
-
-import java.util.Optional;
-
-import java.util.UUID;
-
-import java.util.Set;
-
-import java.util.HashSet;
-
+import java.util.*;
 import java.util.function.Predicate;
 
+import com.seveneleven.mycontactapp.contact.filter.ContactFilter;
 import com.seveneleven.mycontactapp.contact.model.Contact;
 import com.seveneleven.mycontactapp.contact.search.SearchCriteria;
 
+/**
+ * Service layer responsible for managing Contact entities.
+ *
+ * Provides:
+ *  - CRUD operations
+ *  - Bulk operations
+ *  - Search (Strategy Pattern)
+ *  - Advanced filtering (Predicate-based)
+ *
+ * NOTE: In-memory storage only.
+ */
 public class ContactService {
-
-    // In-memory storage
 
     private final List<Contact> contacts = new ArrayList<>();
 
-    // =========================
-
-    // UC-04 : CREATE CONTACT
-
-    // =========================
-
+    // ================= CREATE =================
     public void addContact(Contact contact) {
-
         contacts.add(contact);
-
     }
 
-    // =========================
-
-    // UC-05 : VIEW CONTACT (BY ID)
-
-    // =========================
-
+    // ================= VIEW =================
     public Optional<Contact> getContactById(UUID id) {
-
         return contacts.stream()
-
-                .filter(contact -> contact.getId().equals(id))
-
+                .filter(c -> c.getId().equals(id))
                 .findFirst();
-
     }
-
-    // =========================
-
-    // UC-06 : FIND CONTACT (BY NAME)
-
-    // =========================
 
     public Optional<Contact> getContactByName(String name) {
-
         return contacts.stream()
-
-                .filter(contact -> contact.getName().equalsIgnoreCase(name))
-
+                .filter(c -> c.getName().equalsIgnoreCase(name))
                 .findFirst();
-
     }
 
-    // =========================
+    // Track contact usage
+    public Optional<Contact> getContactAndTrack(UUID id) {
+        return contacts.stream()
+                .filter(c -> c.getId().equals(id))
+                .findFirst()
+                .map(c -> {
+                    c.incrementContactCount();
+                    return c;
+                });
+    }
 
-    // UC-06 : EDIT CONTACT
-
-    // =========================
-
+    // ================= EDIT =================
     public void replaceContact(Contact oldContact, Contact newContact) {
-
         int index = contacts.indexOf(oldContact);
-
         if (index != -1) {
-
             contacts.set(index, newContact);
-
         }
-
     }
 
-    // =========================
-
-    // UC-07 : DELETE CONTACT (BY ID)
-
-    // =========================
-
+    // ================= DELETE =================
     public boolean deleteContactById(UUID id) {
-
-        return contacts.removeIf(
-
-                contact -> contact.getId().equals(id)
-
-        );
-
+        return contacts.removeIf(c -> c.getId().equals(id));
     }
-
-    // =========================
-
-    // UC-07 : DELETE CONTACT (BY NAME)
-
-    // =========================
 
     public boolean deleteContactByName(String name) {
-
-        return contacts.removeIf(
-
-                contact -> contact.getName().equalsIgnoreCase(name)
-
-        );
-
+        return contacts.removeIf(c -> c.getName().equalsIgnoreCase(name));
     }
 
-    // =========================
-
-    // UC-08 : BULK DELETE
-
-    // =========================
-
+    // ================= BULK =================
     public int bulkDelete(Predicate<Contact> condition) {
-
         int before = contacts.size();
-
         contacts.removeIf(condition);
-
         return before - contacts.size();
-
     }
-
-    // =========================
-
-    // UC-08 : BULK TAG
-
-    // =========================
 
     public void bulkAddTag(Predicate<Contact> condition, String tag) {
-
         contacts.stream()
-
                 .filter(condition)
-
-                .forEach(contact -> contact.addTag(tag));
-
+                .forEach(c -> c.addTag(tag));
     }
-
-    // =========================
-
-    // UC-08 : BULK EXPORT
-
-    // =========================
 
     public List<String> bulkExport(Predicate<Contact> condition) {
+        return contacts.stream()
+                .filter(condition)
+                .map(Contact::toString)
+                .toList();
+    }
+
+    // ================= SEARCH (Strategy) =================
+    public List<Contact> search(SearchCriteria criteria) {
+        return contacts.stream()
+                .filter(criteria.toPredicate())
+                .toList();
+    }
+
+    // ================= ADVANCED FILTER =================
+    public List<Contact> advancedFilter(ContactFilter filter,
+                                        Comparator<Contact> sorter) {
 
         return contacts.stream()
-
-                .filter(condition)
-
-                .map(Contact::toString)
-
+                .filter(filter.toPredicate())
+                .sorted(sorter)
                 .toList();
-
-    }
- // ================= UC-09 : SEARCH CONTACTS =================
-    public List<Contact> search(SearchCriteria criteria) {
-       return contacts.stream()
-               .filter(criteria.toPredicate())
-               .toList();
     }
 
-    // =========================
-
-    // EXTRA : LIST ALL CONTACTS
-
-    // =========================
-
+    // ================= EXTRA =================
     public List<Contact> getAllContacts() {
-
-        return List.copyOf(contacts); // immutable view
-
+        return List.copyOf(contacts);
     }
-
 }
- 
