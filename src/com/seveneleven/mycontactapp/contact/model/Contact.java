@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
+
 
 /**
  * Abstract base class representing a Contact.
@@ -29,6 +32,7 @@ public abstract class Contact {
     protected String name;
     protected List<PhoneNumber> phoneNumbers;
     protected List<EmailAddress> emailAddresses;
+    private final Set<String> tags=new HashSet<>();
 
     /**
      * Constructor used by subclasses.
@@ -56,7 +60,7 @@ public abstract class Contact {
      * Returns the unique contact ID.
      */
     public UUID getId() {
-        return id;
+        return id; 
     }
 
     /**
@@ -115,6 +119,15 @@ public abstract class Contact {
 
         this.emailAddresses = new ArrayList<>(emailAddresses); // defensive copy
 
+    }
+ // ================= TAG SUPPORT (UC-08) =================
+    public void addTag(String tag) {
+       if (tag != null && !tag.isBlank()) {
+           tags.add(tag.toUpperCase());
+       }
+    }
+    public Set<String> getTags() {
+       return Set.copyOf(tags); // immutable view
     }
     protected Contact(Contact other) {
     	this.id = other.id;

@@ -92,6 +92,7 @@ public class Main {
                 System.out.println("4. Change Profile Name (UC-03)");
                 System.out.println("5. Change Password (UC-03)");
                 System.out.println("6. Delete Contact (UC-07)");
+                System.out.println("7. Bulk Operations (UC-08)");
                 System.out.println("0. Exit");
                 System.out.print("Choose option: ");
 
@@ -272,6 +273,99 @@ public class Main {
 
                                 }, () -> System.out.println("❌ Contact not found."));
                     }
+                    case 7 -> {
+
+                        System.out.println("\n=== BULK OPERATIONS ===");
+
+                        System.out.println("1. Bulk Delete by Type");
+
+                        System.out.println("2. Bulk Tag Contacts");
+
+                        System.out.println("3. Bulk Export Contacts");
+
+                        System.out.println("0. Back");
+
+                        System.out.print("Choose option: ");
+
+                        int bulkChoice = Integer.parseInt(sc.nextLine());
+
+                        switch (bulkChoice) {
+
+                            case 1 -> {
+
+                                System.out.println("1. Delete PERSON contacts");
+
+                                System.out.println("2. Delete ORGANIZATION contacts");
+
+                                int typeChoice = Integer.parseInt(sc.nextLine());
+
+                                int deleted = switch (typeChoice) {
+
+                                    case 1 -> contactService.bulkDelete(
+
+                                            c -> c.getType().equalsIgnoreCase("PERSON")
+
+                                    );
+
+                                    case 2 -> contactService.bulkDelete(
+
+                                            c -> c.getType().equalsIgnoreCase("ORGANIZATION")
+
+                                    );
+
+                                    default -> 0;
+
+                                };
+
+                                System.out.println("✅ Deleted " + deleted + " contacts.");
+
+                            }
+
+                            case 2 -> {
+
+                                System.out.print("Enter tag name: ");
+
+                                String tag = sc.nextLine();
+
+                                contactService.bulkAddTag(c -> true, tag);
+
+                                System.out.println("✅ Tag applied to all contacts.");
+
+                            }
+
+                            case 3 -> {
+
+                                System.out.println("\n=== EXPORT ===");
+
+                                contactService.bulkExport(c -> true)
+
+                                        .forEach(System.out::println);
+
+                            }
+
+                            case 0 -> System.out.println("Returning to main menu...");
+
+                            default -> System.out.println("Invalid option.");
+
+                        }
+
+                    }
+                     
+                    case 8 -> {
+                    	   System.out.println("1. Delete all PERSON contacts");
+                    	   System.out.println("2. Delete all ORGANIZATION contacts");
+                    	   int choice1 = Integer.parseInt(sc.nextLine());
+                    	   int deleted = switch (choice1) {
+                    	       case 1 -> contactService.bulkDelete(
+                    	               c -> c.getType().equalsIgnoreCase("PERSON")
+                    	       );
+                    	       case 2 -> contactService.bulkDelete(
+                    	               c -> c.getType().equalsIgnoreCase("ORGANIZATION")
+                    	       );
+                    	       default -> 0;
+                    	   };
+                    	   System.out.println("✅ Deleted " + deleted + " contacts.");
+                    	}
 
                     // =====================================================
                     // EXIT APPLICATION
